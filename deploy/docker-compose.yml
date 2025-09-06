@@ -1,0 +1,33 @@
+services:
+  consul:
+    image: hashicorp/consul:1.19
+    command: ["agent", "-dev", "-client=0.0.0.0", "-ui"]
+    ports:
+      - "8500:8500"
+    volumes:
+      - ./consul:/consul/config
+
+  user:
+    build:
+      context: ..      # 👈 sube un nivel para que vea go.mod y cmd/
+      dockerfile: deploy/docker/user.Dockerfile
+    container_name: user-svc
+    environment:
+      - PORT=8081
+    expose:
+      - "8081"
+    depends_on:
+      - consul
+
+  gateway:
+    build:
+      context: .. #// 👈 sube un nivel para que vea go.mod y cmd/
+      dockerfile: deploy/docker/gateway.Dockerfile
+    container_name: gateway
+    environment:
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user
+      - consul

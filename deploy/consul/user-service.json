@@ -1,0 +1,13 @@
+{
+  "service": {
+    "id": "user-svc-1",
+    "name": "user-svc",
+    "address": "user",
+    "port": 8081,
+    "check": {
+      "http": "http://user:8081/healthz",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
