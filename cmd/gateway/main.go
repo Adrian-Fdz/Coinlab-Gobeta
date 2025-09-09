@@ -64,9 +64,39 @@ func loginProxy(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, resp.Body)
 }
 
+func registerProxy(w http.ResponseWriter, r *http.Request) {
+	instances, err := getUserSvcInstances()
+	if err != nil || len(instances) == 0 {
+		http.Error(w, "no upstream available", 502)
+		return
+	}
+
+	// round robin
+	idx := atomic.AddUint64(&counter, 1)
+	target := instances[idx%uint64(len(instances))]
+
+	u, _ := url.Parse(target + "/register")
+	req, _ := http.NewRequest(r.Method, u.String(), r.Body) // reenvía el mismo método (POST)
+	req.Header = r.Header
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		http.Error(w, "upstream error", 502)
+		return
+	}
+	defer resp.Body.Close()
+
+	w.WriteHeader(resp.StatusCode)
+	io.Copy(w, resp.Body)
+}
+
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/login", loginProxy)
+	mux.HandleFunc("/register", registerProxy)
+
+	// puerto desde variable de entorno o 8080 por defecto
 
 	port := ":8080"
 	if p := os.Getenv("PORT"); p != "" {

@@ -1,9 +1,25 @@
 services:
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:                      # 👈 añade esto
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
   consul:
     image: hashicorp/consul:1.19
     command: ["agent", "-dev", "-client=0.0.0.0", "-ui"]
-    ports:
-      - "8500:8500"
+    ports: ["8500:8500"]
     volumes:
       - ./consul:/consul/config
 
@@ -14,10 +30,12 @@ services:
     container_name: user-svc
     environment:
       - PORT=8081
+      - DB_DSN=postgres://app:app@postgres:5432/appdb?sslmode=disable
+    #ports:  #expose: -8081
+    #  - "8081:8081"
     expose:
       - "8081"
-    depends_on:
-      - consul
+    depends_on: [postgres, consul]
 
   gateway:
     build:
@@ -31,3 +49,6 @@ services:
     depends_on:
       - user
       - consul
+volumes:
+  pgdata:
+

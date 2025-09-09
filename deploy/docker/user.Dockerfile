@@ -1,5 +1,5 @@
 # Etapa de build
-FROM golang:1.22 AS builder
+FROM golang:1.23 AS builder
 WORKDIR /app
 
 # Copiamos go.mod y go.sum primero (mejor caché)
