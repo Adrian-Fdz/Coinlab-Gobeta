@@ -1,0 +1,13 @@
+{
+  "service": {
+    "id": "keys-svc-1",
+    "name": "keys-svc",
+    "address": "keys",
+    "port": 8083,
+    "check": {
+      "http": "http://keys:8083/healthz",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}

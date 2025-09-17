@@ -19,8 +19,8 @@ type RegisterReq struct {
 	Phone    string `json:"phone"`
 	Name     string `json:"name"`
 	CURP     string `json:"curp"`
-	DOB      string `json:"dob"`      // "YYYY-MM-DD"
-	Age      int    `json:"age"`      // lo guardamos tal cual por ahora
+	DOB      string `json:"dob"`      //YYYY-MM-DD
+	Age      int    `json:"age"`      //lo guardamos tal cual por ahora
 	Password string `json:"password"`
 }
 type LoginReq struct {

@@ -49,6 +49,23 @@ services:
     depends_on:
       - user
       - consul
+
+  keys:
+    build:
+      context: ..
+      dockerfile: deploy/docker/keys.Dockerfile
+    container_name: keys-svc
+    environment:
+      - PORT=8083
+      - DB_DSN=postgres://app:app@postgres:5432/appdb?sslmode=disable
+      - KEYS_MASTER=base64:VjLUXPXFnTyvf+1rAObOCWHHCklpaY5hPbzGZzZ7JKU=  # 32 bytes en base64
+    expose:
+      - "8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      consul:
+        condition: service_started
+
 volumes:
   pgdata:
-
