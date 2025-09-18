@@ -1,9 +1,0 @@
-curl.exe -X POST http://localhost:8080/register -H "Content-Type: application/json" -d "{\"email\":\"ada@lovelace.org\",\"phone\":\"+525512345678\",\"name\":\"Ada Lovelace\",\"curp\":\"ABCD001231HDFLRN09\",\"dob\":\"2000-12-31\",\"age\":24,\"password\":\"secret123\"}"
-
-cd deploy
-docker compose up --build
-docker compoose down
-
-postgre
-docker compose exec -T postgres psql -U app -d appdb -c "SELECT email, name, curp, age, created_at FROM users ORDER BY created_at DESC LIMIT 10;"
-docker compose exec -T postgres psql -U app -d appdb -c "SELECT COUNT(*) FROM users;"
